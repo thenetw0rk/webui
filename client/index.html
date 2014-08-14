@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html >
+    <head>
+                               <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Arduin Johnny Five</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+     <script src="/jquery-1.11.0.min.js"></script>
+     <style>
+        body {
+            padding-top: 50px;
+            padding-bottom: 20px;
+            width: 400px;
+        }
+    </style>
+        <link rel="stylesheet" href="css/bootstrapFlatly.css">
+</head>
+<body>
+<div class="container">
+        <h4>Green <span class="label label-success">LED</span></h4>
+        <div id="led5" class="row">
+                <div class="btn-group col-md-3">
+                        <div  class="btn btn-primary action" data-cmd="on"></div>
+
+                        <div class="btn btn-danger action" data-cmd="off"></div>
+                </div>
+
+                <div class="btn-group pull-left col-md-3">
+                        <div class="btn btn-primary action" data-cmd="strobe"></div>
+                        <div class="btn btn-primary action" data-cmd="blink"></div>
+                </div>
+                <div class="btn-group pull-leftcol-md-6">
+                        <div class="btn btn-info action" data-cmd="pulse"></div>
+                        <div class="btn btn-info action" data-cmd="fadeIn"></div>
+                        <div class="btn btn-info action" data-cmd="fadeOut"></div>
+                </div>
+        </div>
+        <hr />
+        <h4>Red <span class="label label-danger">LED</span></h4>
+        <div id="led6" class="row"></div>
+</div>
+<div class="container">
+        <h4>Green <span class="label label-success">Servo 9</span></h4>
+        <div id="servo9" class="row">
+                <div class="btn-group col-md-3">
+                        <div  class="btn btn-primary action" data-cmd="sweep"></div>
+
+                        <div class="btn btn-danger action" data-cmd="off"></div>
+                </div>
+                <div class="btn-group pull-left col-md-3">
+                        <div class="btn btn-primary action" data-cmd="sweep"></div>
+                        <div class="btn btn-primary action" data-cmd="sweep"></div>
+                </div>
+                <div class="btn-group pull-leftcol-md-6">
+                        <div class="btn btn-info action" data-cmd="sweep"></div>
+                        <div class="btn btn-info action" data-cmd="sweep"></div>
+                        <div class="btn btn-info action" data-cmd="sweep"></div>
+                </div>
+        </div>
+        <hr />
+        <h4>Red <span class="label label-danger">Servo 10</span></h4>
+        <div id="servo10" class="row"></div>
+</div>
+<script>
+    // populate button text
+        $('.action').each(function(){
+                var cmd = $(this).data('cmd');
+                $(this).text(cmd);
+        });
+
+        // populate second led html
+        $('#led6').html($('#led5').html());
+
+        // add button listeners.
+        $('#led5 .action').on('click', function(){
+                var cmd = $(this).data('cmd');
+                runCmd(5,cmd);
+        });
+
+        $('#led6 .action').on('click', function(){
+                var cmd = $(this).data('cmd');
+                runCmd(6,cmd);
+        });
+        // Do some special work to make it calls more intuitive.
+        // make stop/off interchangeable, and 'on' will work even if doing pwm calls.
+        var runCmd = function(id,cmd){
+                if(cmd == 'off' || cmd== 'stop'){
+                        $.get('/led/'+id+'/off');
+                        $.get('/led/'+id+'/stop');
+                } else if(cmd == 'on'){
+                        $.get('/led/'+id+'/stop');
+                        $.get('/led/'+id+'/on');
+                } else {
+                        $.get('/led/'+id+'/'+cmd);
+                }
+        };
+
+        $('#servo10').html($('#servo9').html());
+
+        // add button listeners.
+        $('#servo9 .action').on('click', function(){
+                var cmd = $(this).data('cmd');
+                runCmd2(9,cmd);
+        });
+        $('#servo10 .action').on('click', function(){
+                var cmd = $(this).data('cmd');
+                runCmd2(10,cmd);
+        });
+
+        // Do some special work to make it calls more intuitive.
+        // make stop/off interchangeable, and 'on' will work even if doing pwm calls.
+        var runCmd2 = function(id,cmd){
+                if(cmd == 'off' || cmd== 'stop'){
+                        $.get('/servo/'+id+'/stop');
+                } else if(cmd == 'sweep'){
+                        $.get('/servo/'+id+'/sweep');
+                } else {
+                        $.get('/servo/'+id+'/'+cmd);
+                }
+        };
+</script>
+
+</body>
+</html>
